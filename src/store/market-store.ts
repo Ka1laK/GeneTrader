@@ -92,7 +92,9 @@ export const useMarketStore = create<MarketState>((set) => ({
         set({ isLoading: true, error: null });
 
         try {
-            const response = await fetch(`/data/${asset.toLowerCase()}_data.csv`);
+            // Use relative path for GitHub Pages compatibility
+            const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+            const response = await fetch(`${basePath}/data/${asset.toLowerCase()}_data.csv`);
             if (!response.ok) {
                 throw new Error(`Failed to load ${asset} data`);
             }

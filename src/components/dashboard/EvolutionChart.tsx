@@ -3,25 +3,45 @@
 /**
  * Evolution Chart Component
  * Line chart showing fitness improvement over generations
+ * Uses useState + useEffect to ensure real-time updates
  */
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import { useState, useEffect, useMemo } from 'react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { TrendingUp } from 'lucide-react';
 import { useGAStore } from '@/store/ga-store';
 
+interface ChartDataPoint {
+    generation: number;
+    best: number;
+    average: number;
+    worst: number;
+}
+
 export default function EvolutionChart() {
-    // Subscribe to specific state to ensure re-renders
+    // Local state to force re-renders
+    const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
+    const [currentGen, setCurrentGen] = useState(0);
+
+    // Subscribe to store changes
     const fitnessHistory = useGAStore((state) => state.fitnessHistory);
     const generation = useGAStore((state) => state.generation);
+    const isRunning = useGAStore((state) => state.isRunning);
 
-    // Transform data for Recharts
-    const chartData = fitnessHistory.map((stat) => ({
-        generation: stat.generation,
-        best: parseFloat(stat.bestFitness.toFixed(2)),
-        average: parseFloat(stat.averageFitness.toFixed(2)),
-        worst: parseFloat(stat.worstFitness.toFixed(2)),
-    }));
+    // Update local state whenever store changes
+    useEffect(() => {
+        const newData = fitnessHistory.map((stat) => ({
+            generation: stat.generation,
+            best: parseFloat(stat.bestFitness.toFixed(2)),
+            average: parseFloat(stat.averageFitness.toFixed(2)),
+            worst: parseFloat(stat.worstFitness.toFixed(2)),
+        }));
 
+        setChartData(newData);
+        setCurrentGen(generation);
+    }, [fitnessHistory, generation, fitnessHistory.length]);
+
+    // Empty state
     if (chartData.length === 0) {
         return (
             <div className="panel h-full">
@@ -44,15 +64,17 @@ export default function EvolutionChart() {
             <div className="panel-header">
                 <TrendingUp size={16} />
                 Evolución del Fitness
-                <span className="ml-auto text-xs font-normal">
-                    {chartData.length} generaciones
+                <span className="ml-auto text-xs font-normal flex items-center gap-2">
+                    {isRunning && (
+                        <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                    )}
+                    Gen {currentGen} ({chartData.length} pts)
                 </span>
             </div>
 
             <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart
-                        key={`evolution-chart-${generation}`}
                         data={chartData}
                         margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                     >
@@ -112,6 +134,7 @@ export default function EvolutionChart() {
                             strokeWidth={1}
                             fillOpacity={1}
                             fill="url(#colorAvg)"
+                            isAnimationActive={false}
                         />
 
                         {/* Best fitness line */}
@@ -122,6 +145,7 @@ export default function EvolutionChart() {
                             strokeWidth={2}
                             fillOpacity={1}
                             fill="url(#colorBest)"
+                            isAnimationActive={false}
                         />
                     </AreaChart>
                 </ResponsiveContainer>

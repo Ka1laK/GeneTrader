@@ -38,17 +38,15 @@ export default function DataLoader() {
         }
     };
 
-    const handleSampleLoad = async (asset: SampleAsset) => {
+    const handleSampleLoad = (asset: SampleAsset) => {
         setIsLoadingSample(asset);
         resetGA(); // Reset GA when loading new data
 
-        try {
-            await loadSampleData(asset);
-        } catch (err) {
-            console.error('Error loading sample data:', err);
-        } finally {
+        // Use setTimeout to show loading state briefly
+        setTimeout(() => {
+            loadSampleData(asset);
             setIsLoadingSample(null);
-        }
+        }, 100);
     };
 
     return (

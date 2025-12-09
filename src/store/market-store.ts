@@ -5,6 +5,7 @@
 
 import { create } from 'zustand';
 import { Candle, Signal } from '@/types/trading';
+import { getSampleData } from '@/lib/sample-data';
 import Papa from 'papaparse';
 
 interface MarketState {
@@ -16,7 +17,7 @@ interface MarketState {
 
     // Actions
     loadFromCSV: (file: File) => Promise<void>;
-    loadSampleData: (asset: 'SPY' | 'BTC' | 'AAPL') => Promise<void>;
+    loadSampleData: (asset: 'SPY' | 'BTC' | 'AAPL') => void;
     setSignals: (signals: Signal[]) => void;
     clearSignals: () => void;
     clearData: () => void;
@@ -88,69 +89,23 @@ export const useMarketStore = create<MarketState>((set) => ({
         });
     },
 
-    loadSampleData: async (asset: 'SPY' | 'BTC' | 'AAPL') => {
+    // Load sample data - uses embedded data, no fetch required
+    loadSampleData: (asset: 'SPY' | 'BTC' | 'AAPL') => {
         set({ isLoading: true, error: null });
 
         try {
-            // Use relative path for GitHub Pages compatibility
-            const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-            const response = await fetch(`${basePath}/data/${asset.toLowerCase()}_data.csv`);
-            if (!response.ok) {
-                throw new Error(`Failed to load ${asset} data`);
-            }
+            // Get embedded sample data (no network request needed)
+            const candles = getSampleData(asset);
 
-            const csvText = await response.text();
-
-            return new Promise((resolve, reject) => {
-                Papa.parse(csvText, {
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: (results) => {
-                        try {
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            const candles: Candle[] = (results.data as any[]).map((row: Record<string, string>) => {
-                                const dateCol = row['Date'] || row['date'] || row['Fecha'];
-                                const openCol = row['Open'] || row['open'];
-                                const highCol = row['High'] || row['high'];
-                                const lowCol = row['Low'] || row['low'];
-                                const closeCol = row['Close'] || row['close'];
-                                const volumeCol = row['Volume'] || row['volume'] || '0';
-
-                                return {
-                                    time: parseDate(dateCol),
-                                    open: parseFloat(openCol),
-                                    high: parseFloat(highCol),
-                                    low: parseFloat(lowCol),
-                                    close: parseFloat(closeCol),
-                                    volume: parseFloat(volumeCol) || 0,
-                                };
-                            }).filter(c => !isNaN(c.time) && !isNaN(c.close));
-
-                            candles.sort((a, b) => a.time - b.time);
-
-                            set({
-                                candles,
-                                assetName: asset,
-                                isLoading: false,
-                                signals: [],
-                            });
-                            resolve();
-                        } catch (err) {
-                            const errorMsg = err instanceof Error ? err.message : 'Error parsing data';
-                            set({ error: errorMsg, isLoading: false });
-                            reject(err);
-                        }
-                    },
-                    error: (err: Error) => {
-                        set({ error: err.message, isLoading: false });
-                        reject(err);
-                    },
-                });
+            set({
+                candles,
+                assetName: asset,
+                isLoading: false,
+                signals: [],
             });
         } catch (err) {
             const errorMsg = err instanceof Error ? err.message : 'Error loading sample data';
             set({ error: errorMsg, isLoading: false });
-            throw err;
         }
     },
 

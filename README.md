@@ -1,36 +1,121 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧬 GeneTrader: El Laboratorio de Trading Evolutivo
 
-## Getting Started
+Una plataforma web interactiva y educativa que demuestra el poder de los **algoritmos genéticos** para crear y optimizar estrategias de trading algorítmico.
 
-First, run the development server:
+![GeneTrader](https://img.shields.io/badge/GeneTrader-v1.0-blue?style=for-the-badge)
+![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square)
+![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
+
+## 🎯 Objetivo
+
+GeneTrader permite experimentar cómo la **evolución artificial** puede "descubrir" reglas de trading rentables en datos históricos del mercado. Es una herramienta educativa que hace tangibles los conceptos abstractos de los algoritmos genéticos.
+
+## ✨ Características
+
+### 📈 Simulador de Mercado
+- Gráfico de velas interactivo (zoom, desplazamiento)
+- Carga de datos CSV personalizados
+- Datos de ejemplo incluidos (SPY, BTC, AAPL)
+- Visualización de señales de compra/venta
+
+### 🧬 Constructor de Estrategias (ADN)
+- Representación cromosómica de estrategias
+- Reglas basadas en indicadores técnicos (SMA, EMA, RSI)
+- Inspector de ADN con formato legible
+
+### ⚙️ Motor Evolutivo
+- Controles interactivos con tooltips educativos
+- Parámetros: población, mutación, cruce, elitismo
+- Múltiples funciones de fitness
+
+### 📊 Dashboard de Rendimiento
+- Métricas en tiempo real (Retorno, Sharpe, Drawdown)
+- Gráfico de evolución del fitness
+- Leaderboard de las mejores estrategias
+
+## 🚀 Instalación Local
 
 ```bash
+# Clonar el repositorio
+git clone https://github.com/tu-usuario/metahuristicas.git
+cd metahuristicas
+
+# Instalar dependencias
+npm install
+
+# Ejecutar en desarrollo
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# O ejecutar en producción
+npm run build
+npm run start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abrir [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🌐 Despliegue con GitHub Pages
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Este proyecto está configurado para desplegarse automáticamente con GitHub Actions.
 
-## Learn More
+### Pasos para desplegar:
 
-To learn more about Next.js, take a look at the following resources:
+1. **Crear repositorio en GitHub** y subir el código:
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial commit"
+   git branch -M main
+   git remote add origin https://github.com/tu-usuario/metahuristicas.git
+   git push -u origin main
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. **Configurar GitHub Pages:**
+   - Ve a Settings → Pages
+   - Source: selecciona "GitHub Actions"
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. **Configurar basePath (si es necesario):**
+   Si tu repositorio NO es `tu-usuario.github.io`, edita `next.config.ts`:
+   ```typescript
+   basePath: '/nombre-de-tu-repo',
+   ```
 
-## Deploy on Vercel
+4. **El despliegue es automático** cada vez que hagas push a `main`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### URL de tu sitio:
+```
+https://tu-usuario.github.io/metahuristicas/
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📚 Documentación
+
+- [GUIA_TECNICA.md](./GUIA_TECNICA.md) - Explicación detallada del sistema
+
+## 🛠️ Stack Tecnológico
+
+- **Framework**: Next.js 15 (App Router)
+- **Frontend**: React 19, TypeScript
+- **Estado**: Zustand
+- **Gráficos**: Lightweight Charts v5, Recharts
+- **Estilos**: Tailwind CSS
+
+## 📁 Estructura del Proyecto
+
+```
+src/
+├── app/           # Páginas y layout
+├── components/    # Componentes React
+├── lib/           # Lógica de negocio (GA, backtesting)
+├── store/         # Estado global (Zustand)
+└── types/         # Tipos TypeScript
+public/
+└── data/          # Datos de ejemplo (CSV)
+```
+
+## ⚠️ Disclaimer
+
+GeneTrader es una herramienta **exclusivamente educativa**. Los resultados de backtesting no garantizan rendimientos futuros. No es asesoría financiera.
+
+## 📄 Licencia
+
+MIT License

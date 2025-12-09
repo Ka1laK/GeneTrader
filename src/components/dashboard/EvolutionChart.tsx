@@ -10,7 +10,9 @@ import { TrendingUp } from 'lucide-react';
 import { useGAStore } from '@/store/ga-store';
 
 export default function EvolutionChart() {
-    const { fitnessHistory } = useGAStore();
+    // Subscribe to specific state to ensure re-renders
+    const fitnessHistory = useGAStore((state) => state.fitnessHistory);
+    const generation = useGAStore((state) => state.generation);
 
     // Transform data for Recharts
     const chartData = fitnessHistory.map((stat) => ({
@@ -50,6 +52,7 @@ export default function EvolutionChart() {
             <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart
+                        key={`evolution-chart-${generation}`}
                         data={chartData}
                         margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                     >
